@@ -73,6 +73,22 @@ const matrixRotationZ = (angle) => [
     [0, 0, 0, 1]
 
 ];
+
+const fovy = 45;
+const aspect = 800 / 600;
+const cotOfFovyDivided2 = (1 / Math.tan(fovy/2));
+const zFar = 100.0;
+const zNear = .1;
+
+const matrixPerspective = () => [
+
+    [cotOfFovyDivided2 / aspect, 0, 0, 0],
+    [0, cotOfFovyDivided2, 0, 0],
+    [0, 0, -(zFar / (zFar - zNear)), -((zNear * zFar) / (zFar - zNear)) ],
+    [0, 0, -1, 0]
+
+];
+
 const multiplyMatrix = (vector, matrix) => {
   
     return {
@@ -92,10 +108,20 @@ meshCube.triangles.forEach(triangle =>{
     const points = triangle.points.map(point => {
 
         
-        const pointRotatedX =  multiplyMatrix(point, matrixRotationX(Math.PI / 4));
+      /*  const pointRotatedX =  multiplyMatrix(point, matrixRotationX(Math.PI / 4));
         const pointRotatedY =  multiplyMatrix(pointRotatedX, matrixRotationY(Math.PI / 4));
         const pointRotatedZ =  multiplyMatrix(pointRotatedY, matrixRotationZ(Math.PI / 2));
-        const pointScaled = multiplyMatrix(pointRotatedZ, matrixUniformScaling(100));
+        const pointScaled = multiplyMatrix(pointRotatedZ, matrixUniformScaling(100));*/
+        const pointPerspective = multiplyMatrix(point, matrixPerspective());
+        //console.table(point)
+        //console.table(pointPerspective)
+        console.log(zFar / (zFar - zNear))
+        console.log(" and ")
+        console.log((zNear * zFar) / (zFar - zNear))
+
+        console.log(zFar / (zFar - zNear) == (zNear * zFar) / (zFar - zNear))
+
+        const pointScaled = multiplyMatrix(pointPerspective, matrixUniformScaling(100));
         const transformedPoint = pointScaled;
 
         return transformedPoint;
@@ -112,6 +138,5 @@ meshCube.triangles.forEach(triangle =>{
     context.stroke();
 
 });
-
 
 
